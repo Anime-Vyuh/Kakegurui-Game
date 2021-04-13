@@ -69,6 +69,9 @@ def display1card(sp1c,sp2c): #show 1 card out of 2 to both the players
     time.sleep(3)
     print("\n Warning: Displaying just one card of player 2.........\n")
     time.sleep(3)
+
+    #one card of player 2 is displayed here, a for loop is used of random numbers for distraction to player 1
+
     print("One of the card of player 2 is: \n")
     print('*' * 10)
     for i in range(5):
