@@ -148,12 +148,11 @@ def show(p1c,p2c):
     print('Player 1 cards:',p1c)
     print('Player 2 cards:',p2c)
 
-def pair():
-    pass
-def suit():
-    pass
-def pig():
-    pass
+def winner(p1name,p2name,player1_card,player2_card):
+    if player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] != player2_card[1][:!]:
+        print("{} won".format(p1name))
+    elif player1_card[0][:1] != player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:!]:
+        print("{} won".format(p2name))
 
 def play_again():
     play = input('Do you wanna play again?(Y/n)').lower()
