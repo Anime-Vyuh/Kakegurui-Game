@@ -95,46 +95,54 @@ def bet(chips1, chips2, name1, name2):
     chips2 = chips2 - 50
     print('Lets get the Kakegurui freak on')
     time.sleep(2)
-    while chips1>0 and chips2>0:
-        #player1 bets here
+
+    while chips1 > 20 and chips2 > 20:
+        # player1 bets here
         while True:
             try:
                 bet1 = int(input(f'{name1}, place your bet(20<chips<100): '))
                 if bet1 < 20 or bet1 > 100:
                     print("Enter a valid bet: ")
                     continue
-                chips1 = chips1 - bet1
-                if chips1 < 0:
-                    print('You can only place bet in range under', abs(chips1+bet1), end='')
+                if chips1 < bet1:
+                    print('You can only place bet in range under', chips1, end='')
                     continue
-                if chips1<20:
-                    print(name1, 'your are out of chips')
-                    break
+                chips1 = chips1 - bet1
+
                 print('Balance player1', chips1)
                 break
+
             except Exception:
                 continue
-            #used try and except coz it should only accept validate number
+            # used try and except coz it should only accept validate number
 
-#player2 bets here
+        if chips1 < 20:
+            print(name1, 'your are out of chips')
+            break
+
+        # player2 bets here
         while True:
             try:
                 bet2 = int(input(f"{name2},place your bet(20<chips<100): "))
                 if bet2 < 20 or bet2 > 100:
                     print('Enter a valid bet: ')
                     continue
-                chips2 = chips2 - bet2
-                if chips2 < 0:
-                    print('You can only place bet in range under', abs(chips2))
+
+                if chips2 < bet2:
+                    print('You can only place bet in range under', chips2)
                     continue
-                if chips2<20:
-                    print(name2, 'your are out of chips')
-                    break
+
+                chips2 = chips2 - bet2
+
                 print('Balance', chips2)
                 break
             except Exception:
                 continue
-        continue
+
+        if chips2 < 20:
+            print(name2, 'your are out of chips')
+            break
+
 
 def show(p1c,p2c):
     print('Player 1 cards:',p1c)
@@ -152,6 +160,7 @@ def play_again():
     if play.startswith('y'):
         return True
     else:
+        print("Thank You For Playing")
         sys.exit()
 
 while True:
@@ -162,6 +171,9 @@ while True:
         display_rules()
     deck40=deck_cards()
     player1=input('Enter player 1 name:')
+
+    #check if the entered name is valid
+
     while player1=='' or player1 in string.digits or player1 in string.punctuation:
         player1=input('Enter player 1 name:')
         continue
