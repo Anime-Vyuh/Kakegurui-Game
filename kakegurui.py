@@ -172,8 +172,9 @@ def winner(p1name,p2name,player1_card,player2_card):
                 player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
             sum_for_same_pair_p2 = sum_for_same_pair_p2 + int(player2_card[player2][1:])
         if sum_for_same_pair_p1 > sum_for_same_pair_p2:
-            print("{} won, as a higher card".format(p1name))
-        print("{} won, as a higher card".format(p2name))
+            print("{} won, as a Higher Pair card".format(p1name))
+        else:
+            print("{} won, as a Higher Pair card".format(p2name))
     elif player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] != player2_card[1][:1]:
         print("{} won, Higher Suits".format(p1name))
     elif player1_card[0][:1] != player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:1]:
@@ -182,14 +183,29 @@ def winner(p1name,p2name,player1_card,player2_card):
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
                 player1_card[player1] = player1_card[player1].replace(player1_card[player1][1:], '11')
-            sum_for_same_pair_p1 = sum_for_same_pair_p1 + int(player1_card[player1][1:])
+            sum_for_same_suit_p1 = sum_for_same_suit_p1 + int(player1_card[player1][1:])
         for player2 in range(len(player2_card)):
             if 'A' in player2_card[player2][1:]:
                 player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
-            sum_for_same_pair_p2 = sum_for_same_pair_p2 + int(player2_card[player2][1:])
-        if sum_for_same_pair_p1 > sum_for_same_pair_p2:
-            print("{} won, as a higher card".format(p1name))
-        print("{} won, as a higher card".format(p2name))
+            sum_for_same_suit_p2 = sum_for_same_suit_p2 + int(player2_card[player2][1:])
+        if sum_for_same_suit_p1 > sum_for_same_suit_p2:
+            print("{} won, as a Higher Suit card".format(p1name))
+        else:
+            print("{} won, as a Higher Suit card".format(p2name))
+    else:
+        for player1 in range(len(player1_card)):
+            if 'A' in player1_card[player1][1:]:
+                player1_card[player1] = player1_card[player1].replace(player1_card[player1][1:], '11')
+            sum_for_pig_p1 = sum_for_pig_p1 + int(player1_card[player1][1:])
+        for player2 in range(len(player2_card)):
+            if 'A' in player2_card[player2][1:]:
+                player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
+            sum_for_pig_p2 = sum_for_pig_p2 + int(player2_card[player2][1:])
+        if sum_for_pig_p1 > sum_for_pig_p2:
+            print("{} won, as a Higher Pig card".format(p1name))
+        else:
+            print("{} won, as a Higher Pig card".format(p2name))
+
 
 
 def play_again():
