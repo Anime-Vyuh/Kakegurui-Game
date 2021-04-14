@@ -149,10 +149,33 @@ def show(p1c,p2c):
     print('Player 2 cards:',p2c)
 
 def winner(p1name,p2name,player1_card,player2_card):
-    if player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] != player2_card[1][:!]:
-        print("{} won".format(p1name))
-    elif player1_card[0][:1] != player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:!]:
-        print("{} won".format(p2name))
+    #addition of higher card is important when both player gets same card or pig
+
+    # if both player as pair, higher card wins
+    sum_for_same_pair_p1=sum_for_same_pair_p2=0   #sum of both player p1 and p2
+    #if both player as suit, same house
+    sum_for_same_suit_p1=sum_for_same_suit_p2=0
+    #if both as a pig
+    sum_for_pig_p1=sum_for_pig_p2=0
+
+    if player1_card[0][1:] == player1_card[1][1:] and player2_card[0][1:] != player2_card[1][1:]:
+        print("{} won, Pair of number".format(p1name))
+    elif player1_card[0][1:] != player1_card[1][1:] and player2_card[0][1:] == player2_card[1][1:]:
+        print("{} won, Pair of number".format(p2name))
+    elif player1_card[0][1:] == player1_card[1][1:] and player2_card[0][1:] == player2_card[1][1:]:
+        for player1 in range(len(player1_card)):
+            if 'A' in player1_card[player1][1:]:
+                player1_card[player1] = player1_card[player1].replace(player1_card[player1][1:], '11')
+            sum_for_same_pair_p1 = sum_for_same_pair_p1 + int(player1_card[player1][1:])
+        for player2 in range(len(player2_card)):
+            if 'A' in player2_card[player2][1:]:
+                player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
+            sum_for_same_pair_p2 = sum_for_same_pair_p2 + int(player2_card[player2][1:])
+        if sum_for_same_pair_p1 > sum_for_same_pair_p2:
+            print("{} won, as a higher card".format(p1name))
+        print("{} won, as a higher card".format(p2name))
+
+
 
 def play_again():
     play = input('Do you wanna play again?(Y/n)').lower()
@@ -176,7 +199,9 @@ while True:
     while player1=='' or player1 in string.digits or player1 in string.punctuation:
         player1=input('Enter player 1 name:')
         continue
+
     player2=input('Enter player 2 name:')
+
     while player2=='' or player2 in string.digits or player2 in string.punctuation:
         player2=input('Enter player 2 name:')
         continue
@@ -187,5 +212,6 @@ while True:
     display1card(card_p1,card_p2)
     bet(chips1,chips2,player1,player2)
     show(card_p1,card_p2)
+    winner(player1,player2,card_p1,card_p2)
     play_again()
     break
