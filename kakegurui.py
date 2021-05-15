@@ -88,7 +88,7 @@ def display1card(sp1c,sp2c): #show 1 card out of 2 to both the players
     time.sleep(2)
     print('\n')
 
-def bet(chips1, chips2, name1, name2):
+def bet(chips1, chips2, name1, name2,card_player1,card_player2):
     print('Collecting match fee of 50 chips each....')
     time.sleep(1.5)
     chips1 = chips1 - 50
@@ -100,7 +100,10 @@ def bet(chips1, chips2, name1, name2):
         # player1 bets here
         while True:
             try:
-                bet1 = int(input(f'{name1}, place your bet(20<chips<100): '))
+                bet1 = input(f'{name1}, place your bet(20<chips<100), enter show to display cards: ')
+                if bet1 == "show":
+                    winner(name1,name2,card_player1,card_player2)
+                bet1 = int(bet1)
                 if bet1 < 20 or bet1 > 100:
                     print("Enter a valid bet: ")
                     continue
@@ -123,7 +126,10 @@ def bet(chips1, chips2, name1, name2):
         # player2 bets here
         while True:
             try:
-                bet2 = int(input(f"{name2},place your bet(20<chips<100): "))
+                bet2 = input(f"{name2},place your bet(20<chips<100): ")
+                if bet2 == "show":
+                    winner(name1,name2,card_player1,card_player2)
+                bet2=int(bet2)
                 if bet2 < 20 or bet2 > 100:
                     print('Enter a valid bet: ')
                     continue
@@ -241,7 +247,7 @@ while True:
     k = get_cards(deck40)
     card_p1, card_p2 = k[0], k[1]
     display1card(card_p1,card_p2)
-    bet(chips1,chips2,player1,player2)
+    bet(chips1,chips2,player1,player2,card_p1,card_p2)
     show(card_p1,card_p2)
     winner(player1,player2,card_p1,card_p2)
     play_again()
