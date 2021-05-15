@@ -67,7 +67,7 @@ def display1card(sp1c,sp2c): #show 1 card out of 2 to both the players
         if i in (50, 100, 150,200,250, 290, 320, 350, 380):
             print('')
     time.sleep(3)
-    print("\n Warning: Displaying just one card of player 2.........\n")
+    print("\n\n Warning: Displaying just one card of player 2.........\n\n")
     time.sleep(3)
 
     #one card of player 2 is displayed here, a for loop is used of random numbers for distraction to player 1
@@ -95,7 +95,6 @@ def bet(chips1, chips2, name1, name2,card_player1,card_player2):
     chips2 = chips2 - 50
     print('Lets get the Kakegurui freak on')
     time.sleep(2)
-
     while chips1 > 20 and chips2 > 20:
         # player1 bets here
         while True:
@@ -103,22 +102,26 @@ def bet(chips1, chips2, name1, name2,card_player1,card_player2):
                 bet1 = input(f'{name1}, place your bet(20<chips<100), enter show to display cards: ')
                 if bet1 == "show":
                     winner(name1,name2,card_player1,card_player2)
-                bet1 = int(bet1)
-                if bet1 < 20 or bet1 > 100:
+                elif int(bet1) < 20 or int(bet1)> 100:
                     print("Enter a valid bet: ")
                     continue
-                if chips1 < bet1:
+                elif chips1 < bet1:
                     print('You can only place bet in range under', chips1, end='')
                     continue
-                chips1 = chips1 - bet1
+                else:
+                    print("Wrong Entry, Try Again")
+                    continue
 
+                chips1 = chips1 - bet1
                 print('Balance player1', chips1)
                 break
 
-            except Exception:
+            except TypeError:
                 continue
-            # used try and except coz it should only accept validate number
+            except ValueError:
+                continue
 
+            # used try and except coz it should only accept validate number
         if chips1 < 20:
             print(name1, 'your are out of chips')
             break
@@ -149,12 +152,12 @@ def bet(chips1, chips2, name1, name2,card_player1,card_player2):
             print(name2, 'your are out of chips')
             break
 
-
 def show(p1c,p2c):
     print('Player 1 cards:',p1c)
     print('Player 2 cards:',p2c)
 
 def winner(p1name,p2name,player1_card,player2_card):
+    round=1
     #addition of higher card is important when both player gets same card or pig
 
     # if both player as pair, higher card wins
@@ -211,7 +214,11 @@ def winner(p1name,p2name,player1_card,player2_card):
             print("{} won, as a Higher Pig card".format(p1name))
         else:
             print("{} won, as a Higher Pig card".format(p2name))
-
+    round +=1
+    if round > 3:
+        play_again()
+    print("Round {} begins".format(round))
+    
 
 
 def play_again():
@@ -230,9 +237,7 @@ while True:
         display_rules()
     deck40=deck_cards()
     player1=input('Enter player 1 name:')
-
     #check if the entered name is valid
-
     while player1=='' or player1 in string.digits or player1 in string.punctuation:
         player1=input('Enter player 1 name:')
         continue
@@ -242,6 +247,7 @@ while True:
     while player2=='' or player2 in string.digits or player2 in string.punctuation:
         player2=input('Enter player 2 name:')
         continue
+    
     chips1,chips2=500,500
     #choose cards
     k = get_cards(deck40)
@@ -250,5 +256,4 @@ while True:
     bet(chips1,chips2,player1,player2,card_p1,card_p2)
     show(card_p1,card_p2)
     winner(player1,player2,card_p1,card_p2)
-    play_again()
     break
