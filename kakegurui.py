@@ -1,5 +1,5 @@
 import string,time
-import random,sys
+import random,sys,pygame
 from intro import kakegurui_intro
 
 def display_rules():
@@ -93,8 +93,11 @@ def bet(chips1, chips2, name1, name2,card_player1,card_player2):
     time.sleep(1.5)
     chips1 = chips1 - 50
     chips2 = chips2 - 50
+    pygame.mixer.music.load("yumeko.ogg")
+    pygame.mixer.music.play(loops=1)
+    time.sleep(2.5)
     print('Lets get the Kakegurui freak on')
-    time.sleep(2)
+    time.sleep(3)
     while chips1 > 20 and chips2 > 20:
         # player1 bets here
         while True:
@@ -230,6 +233,7 @@ def play_again():
         sys.exit()
 
 while True:
+    pygame.init()
     print(kakegurui_intro) #the intro py module just displays the game intro design
     #enter players name
     game_rules=input('Do you want to see the game rules(y/n):').lower()
