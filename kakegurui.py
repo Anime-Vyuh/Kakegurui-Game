@@ -36,7 +36,7 @@ def deck_cards():
         for s in suits:
             card = s+str(suits_card)
             deck.append(card)
-    random.shuffle(deck) #shuffles the 40 deck 
+    random.shuffle(deck) #shuffles the 40 deck
     return deck
 
 def get_cards(deck40):
@@ -139,7 +139,6 @@ def bet(chips1, chips2, name1, name2,card_player1,card_player2):
                 if bet2 < 20 or bet2 > 100:
                     print('Enter a valid bet: ')
                     continue
-
                 if chips2 < bet2:
                     print('You can only place bet in range under', chips2)
                     continue
@@ -159,8 +158,11 @@ def show(p1c,p2c):
     print('Player 1 cards:',p1c)
     print('Player 2 cards:',p2c)
 
+def cards_showdown(player1_card,player2_card):
+    print("Player 1 cards:{}".format(player1_card))
+    print("Player 2 cards:{}".format(player2_card))
+
 def winner(p1name,p2name,player1_card,player2_card):
-    round=1
     #addition of higher card is important when both player gets same card or pig
 
     # if both player as pair, higher card wins
@@ -172,8 +174,10 @@ def winner(p1name,p2name,player1_card,player2_card):
 
     if player1_card[0][1:] == player1_card[1][1:] and player2_card[0][1:] != player2_card[1][1:]:
         print("{} won, Pair of number".format(p1name))
+        cards_showdown(player1_card,player2_card)
     elif player1_card[0][1:] != player1_card[1][1:] and player2_card[0][1:] == player2_card[1][1:]:
         print("{} won, Pair of number".format(p2name))
+        cards_showdown(player1_card,player2_card)
     elif player1_card[0][1:] == player1_card[1][1:] and player2_card[0][1:] == player2_card[1][1:]:
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
@@ -185,12 +189,16 @@ def winner(p1name,p2name,player1_card,player2_card):
             sum_for_same_pair_p2 = sum_for_same_pair_p2 + int(player2_card[player2][1:])
         if sum_for_same_pair_p1 > sum_for_same_pair_p2:
             print("{} won, as a Higher Pair card".format(p1name))
+            cards_showdown(player1_card,player2_card)
         else:
             print("{} won, as a Higher Pair card".format(p2name))
+            cards_showdown(player1_card,player2_card)
     elif player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] != player2_card[1][:1]:
         print("{} won, Higher Suits".format(p1name))
+        cards_showdown(player1_card,player2_card)
     elif player1_card[0][:1] != player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:1]:
         print("{} won, Higher Suits".format(p2name))
+        cards_showdown(player1_card,player2_card)
     elif player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:1]:
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
@@ -202,8 +210,10 @@ def winner(p1name,p2name,player1_card,player2_card):
             sum_for_same_suit_p2 = sum_for_same_suit_p2 + int(player2_card[player2][1:])
         if sum_for_same_suit_p1 > sum_for_same_suit_p2:
             print("{} won, as a Higher Suit card".format(p1name))
+            cards_showdown(player1_card,player2_card)
         else:
             print("{} won, as a Higher Suit card".format(p2name))
+            cards_showdown(player1_card,player2_card)
     else:
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
@@ -215,14 +225,10 @@ def winner(p1name,p2name,player1_card,player2_card):
             sum_for_pig_p2 = sum_for_pig_p2 + int(player2_card[player2][1:])
         if sum_for_pig_p1 > sum_for_pig_p2:
             print("{} won, as a Higher Pig card".format(p1name))
+            cards_showdown(player1_card,player2_card)
         else:
             print("{} won, as a Higher Pig card".format(p2name))
-    round +=1
-    if round > 3:
-        play_again()
-    print("Round {} begins".format(round))
-    
-
+            cards_showdown(player1_card,player2_card)
 
 def play_again():
     play = input('Do you wanna play again?(Y/n)').lower()
@@ -233,6 +239,7 @@ def play_again():
         sys.exit()
 
 while True:
+    round=1
     pygame.init()
     print(kakegurui_intro) #the intro py module just displays the game intro design
     #enter players name
@@ -251,13 +258,18 @@ while True:
     while player2=='' or player2 in string.digits or player2 in string.punctuation:
         player2=input('Enter player 2 name:')
         continue
-    
+
     chips1,chips2=500,500
     #choose cards
-    k = get_cards(deck40)
-    card_p1, card_p2 = k[0], k[1]
+    player_card = get_cards(deck40)
+    card_p1, card_p2 = player_card[0], player_card[1]
     display1card(card_p1,card_p2)
     bet(chips1,chips2,player1,player2,card_p1,card_p2)
     show(card_p1,card_p2)
     winner(player1,player2,card_p1,card_p2)
+    round +=1
+    if round >= 3:
+        play_again()
+    print("Round {} begins".format(round))
+
     break
