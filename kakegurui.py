@@ -1,15 +1,19 @@
 import string,time
 import random,sys,pygame
-from intro import kakegurui_intro
+import os
+import termcolor
+
+dialog_path = os.path.join("assets","yumeko.ogg")
 
 def display_rules():
-    print('''
+    termcolor.cprint('''
     Try your luck
     Idea taken from: KAKEGURUI Season 1 episode 4
 
     INDIAN POKER (deck of 40 cards with joker and face card removed)
 
     game rules, read this before playing
+    [here player 2 is  computer]
     rule 0: 2 players will play the game simultaneously which is 40 deck card Indian poker
     rule 1: 1000 chips will be provided initially, game starts with 50 chip as fee and 2 cards to each player
     rule 2: minimum of 25 chips can be bet at a time
@@ -21,7 +25,7 @@ def display_rules():
     rule 8: if both the player have same type, higher sum is the winner
 
     SO COME ON LETS GET KAKEGURUI FREAK ON
-    \n ''')
+    \n ''',"green")
 
 # heart(H), spade(S), club(C), diamond(D)
 
@@ -29,9 +33,8 @@ def deck_cards():
     num=list(range(2,11)) #it is a 40 card deck game with face card removed
     suits = ['S','H','C','D']
     deck = []
-    for ace_card in range(len(suits)): #this for loop appends ace cards in the deck
-        ace=suits[ace_card]+'A'
-        deck.append(ace)
+    for ace_card in suits: #this for loop appends ace cards in the deck
+        deck.append(ace_card+'A')
     for suits_card in num:
         for s in suits:
             card = s+str(suits_card)
@@ -42,127 +45,65 @@ def deck_cards():
 def get_cards(deck40):
     #lets consider A as 11 while addition for higher cards
     #p1c - player 1 random cards
-    #p2c - player 2 random cards
-    p1c,p2c = [],[]
+    #computer - computer random cards
+    p1c,comp = [],[]
     for i in range(2):
         p1c.append(random.choice(deck40))
-        p2c.append(random.choice(deck40))
-    return(p1c,p2c)
+        comp.append(random.choice(deck40))
+    return(p1c,comp)
 
-def display1card(sp1c,sp2c): #show 1 card out of 2 to both the players
-    print("Warning: Displaying just one card of player 1.........\n")
-    time.sleep(3)
-    print("One of the card of player 1 is: \n")
-    print('*' * 10)
-    for i in range(5):
-        if i == 2:
-            print('*   ' +random.choice(sp1c) + '   *')
-            continue
-        print('*' + ' ' * 8 + '*')
-    print('*' * 10)
-    time.sleep(3)
-    #this for loop below is just a distraction provided so that the other player should not see each other cards
-    for i in range(10000):
-        print(random.choice(string.ascii_letters), end='')
-        if i in (50, 100, 150,200,250, 290, 320, 350, 380):
-            print('')
-    time.sleep(3)
-    print("\n\n Warning: Displaying just one card of player 2.........\n\n")
-    time.sleep(3)
+def display1card_toPlayer(sp1c): #show 1 card out of 2 to the player
+    print("Displaying 1 card out of 2 to the Player")
+    print("\n\n Your Card:{} \n\n".format(random.choice(sp1c)))
 
-    #one card of player 2 is displayed here, a for loop is used of random numbers for distraction to player 1
-
-    print("One of the card of player 2 is: \n")
-    print('*' * 10)
-    for i in range(5):
-        if i == 2:
-            print('*   ' +random.choice(sp2c)+ '   *')
-            continue
-        print('*' + ' ' * 8 + '*')
-    print('*' * 10)
-    time.sleep(4)
-    for i in range(10000):
-        print(random.choice(string.ascii_letters), end='')
-        if i in (30,100,170, 200, 230, 250, 290, 320, 350, 380):
-            print('')
-    time.sleep(2)
-    print('\n')
-
-def bet(chips1, chips2, name1, name2,card_player1,card_player2):
-    print('Collecting match fee of 50 chips each....')
-    time.sleep(1.5)
-    chips1 = chips1 - 50
-    chips2 = chips2 - 50
-    pygame.mixer.music.load("yumeko.ogg")
-    pygame.mixer.music.play(loops=1)
-    time.sleep(2.5)
-    print('Lets get the Kakegurui freak on')
+def bet(chips1, chips2, name,card_player1,card_player2,total_chips_won):
+    print('Collecting match fee of 1 chip each....')
+    chips1-=1
+    chips2-=1
     time.sleep(3)
-    while chips1 > 20 and chips2 > 20:
-        # player1 bets here
-        while True:
-            try:
-                bet1 = input(f'{name1}, place your bet(20<chips<100), enter show to display cards: ')
-                if bet1 == "show":
-                    winner(name1,name2,card_player1,card_player2)
-                elif int(bet1) < 20 or int(bet1)> 100:
-                    print("Enter a valid bet: ")
-                    continue
-                elif chips1 < bet1:
-                    print('You can only place bet in range under', chips1, end='')
-                    continue
+    while True:
+        try:
+            player1_bet = int(input("{}; Enter your bet in range(1-5) or 0 to show: ".format(name)))
+            comp_bet = random.randint(0,5)
+            if player1_bet==0:
+                confirm = input("Are you filling to show?(Y/n)").lower()
+                if confirm.startswith("y"):
+                    termcolor.cprint("{} decides to show".format(name),"red")
+                    winner(name,card_player1,card_player2,total_chips_won,chips1,chips2)
+                    break
                 else:
-                    print("Wrong Entry, Try Again")
                     continue
-
-                chips1 = chips1 - bet1
-                print('Balance player1', chips1)
+            if comp_bet==0:
+                termcolor.cprint("Computer Decided to Show","red")
+                winner(name,card_player1,card_player2,total_chips_won,chips1,chips2)
                 break
-
-            except TypeError:
+            elif player1_bet in range(1,6):
+                if chips1>1 and chips2>1:
+                    chips1 = chips1-player1_bet
+                    print("Computer Placed His Bet:{}".format(comp_bet))
+                    chips2 = chips2-comp_bet
+                    total_chips_won += player1_bet+comp_bet
+                else:
+                    print("Insuffient Chip, you are forced to show")
+                    winner(name,card_player1,card_player2,total_chips_won,chips1,chips2)
+                    break
+            else:
+                print("Invalid Bet Range(1-5) or 0 to show")
                 continue
-            except ValueError:
-                continue
+            termcolor.cprint("Your Available Chips:{}".format(chips1),"blue")
+            termcolor.cprint("Computer Available Chips:{}".format(chips2),"blue")
+        except ValueError:
+            print("Illegal entry")
 
-            # used try and except coz it should only accept validate number
-        if chips1 < 20:
-            print(name1, 'your are out of chips')
-            break
-
-        # player2 bets here
-        while True:
-            try:
-                bet2 = input(f"{name2},place your bet(20<chips<100): ")
-                if bet2 == "show":
-                    winner(name1,name2,card_player1,card_player2)
-                bet2=int(bet2)
-                if bet2 < 20 or bet2 > 100:
-                    print('Enter a valid bet: ')
-                    continue
-                if chips2 < bet2:
-                    print('You can only place bet in range under', chips2)
-                    continue
-
-                chips2 = chips2 - bet2
-
-                print('Balance', chips2)
-                break
-            except Exception:
-                continue
-
-        if chips2 < 20:
-            print(name2, 'your are out of chips')
-            break
-
-def show(p1c,p2c):
+"""def show(p1c,p2c):
     print('Player 1 cards:',p1c)
-    print('Player 2 cards:',p2c)
+    print('Player 2 cards:',p2c)"""
 
-def cards_showdown(player1_card,player2_card):
+def cards_showdown(player1_card,comp_card):
     print("Player 1 cards:{}".format(player1_card))
-    print("Player 2 cards:{}".format(player2_card))
+    print("Computer cards:{}".format(comp_card))
 
-def winner(p1name,p2name,player1_card,player2_card):
+def winner(p1name,player1_card,comp_card,total_chips_won,chips1,chips2):
     #addition of higher card is important when both player gets same card or pig
 
     # if both player as pair, higher card wins
@@ -172,63 +113,76 @@ def winner(p1name,p2name,player1_card,player2_card):
     #if both as a pig
     sum_for_pig_p1=sum_for_pig_p2=0
 
-    if player1_card[0][1:] == player1_card[1][1:] and player2_card[0][1:] != player2_card[1][1:]:
+    #checking for the pair
+    if player1_card[0][1:] == player1_card[1][1:] and comp_card[0][1:] != comp_card[1][1:]:
+        chips1+=total_chips_won
         print("{} won, Pair of number".format(p1name))
-        cards_showdown(player1_card,player2_card)
-    elif player1_card[0][1:] != player1_card[1][1:] and player2_card[0][1:] == player2_card[1][1:]:
-        print("{} won, Pair of number".format(p2name))
-        cards_showdown(player1_card,player2_card)
-    elif player1_card[0][1:] == player1_card[1][1:] and player2_card[0][1:] == player2_card[1][1:]:
+        cards_showdown(player1_card,comp_card)
+    elif player1_card[0][1:] != player1_card[1][1:] and comp_card[0][1:] == comp_card[1][1:]:
+        chips2+=total_chips_won
+        print("{} won, Pair of number".format("Computer"))
+        cards_showdown(player1_card,comp_card)
+    elif player1_card[0][1:] == player1_card[1][1:] and comp_card[0][1:] == comp_card[1][1:]:
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
                 player1_card[player1] = player1_card[player1].replace(player1_card[player1][1:], '11')
             sum_for_same_pair_p1 = sum_for_same_pair_p1 + int(player1_card[player1][1:])
-        for player2 in range(len(player2_card)):
-            if 'A' in player2_card[player2][1:]:
-                player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
-            sum_for_same_pair_p2 = sum_for_same_pair_p2 + int(player2_card[player2][1:])
+        for player2 in range(len(comp_card)):
+            if 'A' in comp_card[player2][1:]:
+                comp_card[player2] = comp_card[player2].replace(comp_card[player2][1:], '11')
+            sum_for_same_pair_p2 = sum_for_same_pair_p2 + int(comp_card[player2][1:])
         if sum_for_same_pair_p1 > sum_for_same_pair_p2:
             print("{} won, as a Higher Pair card".format(p1name))
-            cards_showdown(player1_card,player2_card)
+            chips1+=total_chips_won
+            cards_showdown(player1_card,comp_card)
         else:
-            print("{} won, as a Higher Pair card".format(p2name))
-            cards_showdown(player1_card,player2_card)
-    elif player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] != player2_card[1][:1]:
+            chips2+=total_chips_won
+            print("{} won, as a Higher Pair card".format("Computer"))
+            cards_showdown(player1_card,comp_card)
+
+    elif player1_card[0][:1] == player1_card[1][:1] and comp_card[0][:1] != comp_card[1][:1]:
+        chips1+=total_chips_won
         print("{} won, Higher Suits".format(p1name))
-        cards_showdown(player1_card,player2_card)
-    elif player1_card[0][:1] != player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:1]:
-        print("{} won, Higher Suits".format(p2name))
-        cards_showdown(player1_card,player2_card)
-    elif player1_card[0][:1] == player1_card[1][:1] and player2_card[0][:1] == player2_card[1][:1]:
+        cards_showdown(player1_card,comp_card)
+    elif player1_card[0][:1] != player1_card[1][:1] and comp_card[0][:1] == comp_card[1][:1]:
+        chips2+=total_chips_won
+        print("{} won, Higher Suits".format("Computer"))
+        cards_showdown(player1_card,comp_card)
+    elif player1_card[0][:1] == player1_card[1][:1] and comp_card[0][:1] == comp_card[1][:1]:
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
                 player1_card[player1] = player1_card[player1].replace(player1_card[player1][1:], '11')
             sum_for_same_suit_p1 = sum_for_same_suit_p1 + int(player1_card[player1][1:])
-        for player2 in range(len(player2_card)):
-            if 'A' in player2_card[player2][1:]:
-                player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
-            sum_for_same_suit_p2 = sum_for_same_suit_p2 + int(player2_card[player2][1:])
+        for player2 in range(len(comp_card)):
+            if 'A' in comp_card[player2][1:]:
+                comp_card[player2] = comp_card[player2].replace(comp_card[player2][1:], '11')
+            sum_for_same_suit_p2 = sum_for_same_suit_p2 + int(comp_card[player2][1:])
         if sum_for_same_suit_p1 > sum_for_same_suit_p2:
             print("{} won, as a Higher Suit card".format(p1name))
-            cards_showdown(player1_card,player2_card)
+            cards_showdown(player1_card,comp_card)
+            chips1+=total_chips_won
         else:
-            print("{} won, as a Higher Suit card".format(p2name))
-            cards_showdown(player1_card,player2_card)
+            chips2+=total_chips_won
+            print("{} won, as a Higher Suit card".format("Computer"))
+            cards_showdown(player1_card,comp_card)
     else:
         for player1 in range(len(player1_card)):
             if 'A' in player1_card[player1][1:]:
                 player1_card[player1] = player1_card[player1].replace(player1_card[player1][1:], '11')
             sum_for_pig_p1 = sum_for_pig_p1 + int(player1_card[player1][1:])
-        for player2 in range(len(player2_card)):
-            if 'A' in player2_card[player2][1:]:
-                player2_card[player2] = player2_card[player2].replace(player2_card[player2][1:], '11')
-            sum_for_pig_p2 = sum_for_pig_p2 + int(player2_card[player2][1:])
+        for player2 in range(len(comp_card)):
+            if 'A' in comp_card[player2][1:]:
+                comp_card[player2] = comp_card[player2].replace(comp_card[player2][1:], '11')
+            sum_for_pig_p2 = sum_for_pig_p2 + int(comp_card[player2][1:])
         if sum_for_pig_p1 > sum_for_pig_p2:
+            chips1+=total_chips_won
             print("{} won, as a Higher Pig card".format(p1name))
-            cards_showdown(player1_card,player2_card)
+            cards_showdown(player1_card,comp_card)
         else:
-            print("{} won, as a Higher Pig card".format(p2name))
-            cards_showdown(player1_card,player2_card)
+            chips2+=total_chips_won
+            print("{} won, as a Higher Pig card".format("Computer"))
+            cards_showdown(player1_card,comp_card)
+    return chips1,chips2
 
 def play_again():
     play = input('Do you wanna play again?(Y/n)').lower()
@@ -238,38 +192,32 @@ def play_again():
         print("Thank You For Playing")
         sys.exit()
 
+game_rules=input('Do you want to see the game rules(y/n):').lower()
+if 'y' in game_rules:
+    display_rules()
+deck40=deck_cards()
+total_chips_won = 0
+round=1
+pygame.init()
+chips1,chips2=100,100
+player=input('Enter player name:')
+pygame.mixer.music.load(dialog_path)
+pygame.mixer.music.play(loops=1)
+termcolor.cprint('Lets get the Kakegurui freak on',"red")
+
 while True:
-    round=1
-    pygame.init()
-    print(kakegurui_intro) #the intro py module just displays the game intro design
-    #enter players name
-    game_rules=input('Do you want to see the game rules(y/n):').lower()
-    if 'y' in game_rules:
-        display_rules()
-    deck40=deck_cards()
-    player1=input('Enter player 1 name:')
-    #check if the entered name is valid
-    while player1=='' or player1 in string.digits or player1 in string.punctuation:
-        player1=input('Enter player 1 name:')
-        continue
-
-    player2=input('Enter player 2 name:')
-
-    while player2=='' or player2 in string.digits or player2 in string.punctuation:
-        player2=input('Enter player 2 name:')
-        continue
-
-    chips1,chips2=500,500
     #choose cards
     player_card = get_cards(deck40)
-    card_p1, card_p2 = player_card[0], player_card[1]
-    display1card(card_p1,card_p2)
-    bet(chips1,chips2,player1,player2,card_p1,card_p2)
-    show(card_p1,card_p2)
-    winner(player1,player2,card_p1,card_p2)
-    round +=1
-    if round >= 3:
-        play_again()
-    print("Round {} begins".format(round))
+    card_p1, card_comp = player_card[0], player_card[1]
+    time.sleep(1.5)
+    display1card_toPlayer(card_p1)
+    bet(chips1,chips2,player,card_p1,card_comp,total_chips_won)
 
-    break
+    chips1,chips2 = winner(player,card_p1,card_comp)
+    round +=1
+    if round > 10:
+        play_again()
+
+    print("\n\n\tRound {} begins \n\n".format(round))
+    time.sleep(5)
+    continue
