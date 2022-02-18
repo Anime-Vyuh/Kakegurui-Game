@@ -220,4 +220,3 @@ while True:
 
     print("\n\n\tRound {} begins \n\n".format(round))
     time.sleep(5)
-    continue
