@@ -70,7 +70,7 @@ class Kakegurui:
         print('Collecting match fee of 1 chip each....')
         self.chips1 -= 1
         self.chips2 -= 1
-        time.sleep(3)
+        time.sleep(1)
         while True:
             try:
                 player1_bet = int(input("{}; Enter your bet in range(1-5) or 0 to show: ".format(self.player_name)))
